@@ -45,7 +45,7 @@ export default function App() {
     <View style={{ flex: 1, backgroundColor: "#bdacacff" }}>
       <SafeAreaView style={styles.container}>
 
-        <Text style={{fontWeight:"bold", fontSize:"24px", marginBottom:"10px"}}>Cadastre Novos Estudantes!</Text>
+        <Text style={{fontWeight:"bold", fontSize:24, marginBottom:10}}>Cadastre Novos Estudantes!</Text>
 
         <TextInput
           style={styles.input}
