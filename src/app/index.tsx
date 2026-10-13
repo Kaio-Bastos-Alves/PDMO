@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 interface Estudante {
   id: string;
   nome: string;
-  rm: string;
+  curso: string;
 }
 
 export default function App() {
-  const [text, setText] = useState(0);
+  const [curso, setCurso] = useState('');
   const [nome, setNome] = useState('');
   const [estudantes, setEstudantes] = useState<Estudante[]>([]);
+  const [edicao, setEdicao] = useState('')
 
   function EditarEstudante(id: string, novoNome: string, novoRm: string) {
+    setEdicao("")
     setEstudantes(estadoAnterior =>
       estadoAnterior.map(estudante => {
         if (estudante.id === id) {
@@ -27,13 +29,13 @@ export default function App() {
     setEstudantes(estudantes.filter(e => e.id !== id));
   }
 
-  function Login(nome: string, rm: string) {
-    const novoEstudante = { id: crypto.randomUUID(), nome, rm };
+  function Login(nome: string, curso: string) {
+    const novoEstudante = { id: crypto.randomUUID(), nome, curso };
     setEstudantes(estadoAnterior => [...estadoAnterior, novoEstudante]);
-    
+
     // Limpa os campos após o login
     setNome('');
-    setText(0);
+    setCurso('');
   }
 
   useEffect(() => {
@@ -45,7 +47,7 @@ export default function App() {
     <View style={{ flex: 1, backgroundColor: "#bdacacff" }}>
       <SafeAreaView style={styles.container}>
 
-        <Text style={{fontWeight:"bold", fontSize:24, marginBottom:10}}>Cadastre Novos Estudantes!</Text>
+        <Text style={{ fontWeight: "bold", fontSize: 24, marginBottom: 10 }}>{edicao.length > 0 ? "Editando o estudante." : "Cadastre novos estudantes!"}</Text>
 
         <TextInput
           style={styles.input}
@@ -56,29 +58,43 @@ export default function App() {
 
         <TextInput
           style={styles.input}
-          placeholder="Digite o seu RM."
-          value={text ? text.toString() : ''}
-          keyboardType="numeric"
-          onChangeText={(rawText) => {
-            const cleaned = rawText.replace(/[^0-9]/g, '');
-            if (cleaned === '') {
-              setText(0);
-            } else {
-              setText(parseInt(cleaned, 10));
-            }
-          }}
+          placeholder="Digite o seu curso."
+          value={curso}
+          onChangeText={(curso) => setCurso(curso)}
         />
 
         <TouchableOpacity
           style={styles.buttan}
           onPress={() => {
-            if (nome.length <= 0 || text <= 0) {
+            if (nome.length <= 0) {
+              Alert.alert('Preencha todos os campos!', 'O campo com o nome não foi preenchido corretamente.', [
+                {
+                  text: 'Cancelar',
+                  onPress: () => console.log('Cancelar Pressionado'),
+                  style: 'cancel',
+                },
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+              ]);
               return;
             }
-            Login(nome, text.toString());
+            else if (curso.length <= 0) {
+              Alert.alert('Preencha todos os campos!', 'O campo com o curso não foi preenchido corretamente.', [
+                {
+                  text: 'Cancelar',
+                  onPress: () => console.log('Cancelar Pressionado'),
+                  style: 'cancel',
+                },
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+              ]);
+            }
+            if(edicao.length > 0){
+              EditarEstudante(edicao,nome,curso)
+              return;
+            }
+            Login(nome, curso);
           }}
         >
-          <Text style={styles.buttanText}>Login</Text>
+          <Text style={styles.buttanText}>Cadastrar Estudante</Text>
         </TouchableOpacity>
 
         {/* 2. Tiramos a condicional que usava a tag <p> e deixamos a FlatList cuidar disso */}
@@ -90,25 +106,23 @@ export default function App() {
             renderItem={({ item: estudante }) => (
               <View style={styles.itemRow}>
                 <Text style={{ flex: 1 }}>
-                  <Text style={{ fontWeight: 'bold' }}>Nome:</Text> {estudante.nome} | 
-                  <Text style={{ fontWeight: 'bold' }}> RM:</Text> {estudante.rm}
+                  <Text style={{ fontWeight: 'bold' }}>   Nome:</Text> {estudante.nome} |
+                  <Text style={{ fontWeight: 'bold' }}>   Curso:</Text> {estudante.curso}
                 </Text>
 
                 <View style={{ flexDirection: 'row' }}>
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     style={styles.btnEdit}
                     onPress={() => {
-                      const novoNome = prompt("Digite o novo nome:", estudante.nome);
-                      const novoRm = prompt("Digite o novo RM:", estudante.rm);
-                      if (novoNome && novoRm) {
-                        EditarEstudante(estudante.id, novoNome, novoRm);
-                      }
+                      setEdicao(estudante.id)
+                      setCurso(estudante.curso)
+                      setNome(estudante.nome)
                     }}
                   >
                     <Text style={{ color: '#000' }}>Editar</Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     style={styles.btnDelete}
                     onPress={() => { DeletarEstudante(estudante.id) }}
                   >
@@ -119,7 +133,7 @@ export default function App() {
             )}
           />
         </View>
-        
+
       </SafeAreaView>
     </View>
   );
@@ -159,23 +173,23 @@ const styles = StyleSheet.create({
     width: '90%',  // Evita que a lista fique grudada nas bordas laterais
   },
   itemRow: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#bebcbcff', // Fundo leve para destacar o item da lista
     padding: 10,
     borderRadius: 8,
-    marginBottom: 10 
+    marginBottom: 10
   },
-  btnEdit: { 
-    backgroundColor: "#c49c9cff", 
-    padding: 6, 
-    borderRadius: 4 
+  btnEdit: {
+    backgroundColor: "#c49c9cff",
+    padding: 6,
+    borderRadius: 4
   },
-  btnDelete: { 
-    backgroundColor: "#b45050ff", 
-    padding: 6, 
-    borderRadius: 4, 
-    marginLeft: 10 
+  btnDelete: {
+    backgroundColor: "#b45050ff",
+    padding: 6,
+    borderRadius: 4,
+    marginLeft: 10
   }
 });
