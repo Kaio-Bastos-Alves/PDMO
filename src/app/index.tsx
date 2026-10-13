@@ -44,7 +44,7 @@ export default function App() {
 
   return (
     // 1. Mudamos para flex: 1 aqui na View mais externa para preencher a tela toda
-    <View style={{ flex: 1, backgroundColor: "rgb(250, 222, 222)" }}>
+    <View style={styles.page}>
       <SafeAreaView style={styles.container}>
 
         <Text style={{ fontWeight: "bold", fontSize: 24, marginBottom: 10 }}>{edicao.length > 0 ? "Editando o estudante." : "Cadastre novos estudantes!"}</Text>
@@ -141,7 +141,11 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ 
+  page:{
+    backgroundColor: "#f2ddff",
+    flex: 1,
+  },
   container: {
     flex: 1,
     alignItems: "center",
@@ -156,10 +160,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 15,
     fontSize: 16,
-    backgroundColor: '#bebcbcff',
+    backgroundColor: "#e9cafc",
   },
   buttan: {
-    backgroundColor: '#b5f7adff',
+    backgroundColor: 'rgb(198, 75, 255)',
     paddingVertical: 6,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -167,7 +171,7 @@ const styles = StyleSheet.create({
     marginBottom: 20, // Espaço extra antes de começar a lista
   },
   buttanText: {
-    color: '#171a16ff',
+    color: 'rgb(255, 255, 255)',
   },
   // Novas classes organizadas para o layout e o scroll funcionarem
   listContainer: {
