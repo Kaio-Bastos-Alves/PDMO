@@ -29,11 +29,11 @@ export default function App() {
     setEstudantes(estudantes.filter(e => e.id !== id));
   }
 
-  function Login(nome: string, rm: string) {
-    const novoEstudante = { id: crypto.randomUUID(), nome, rm };
+  function CadastrarEstudante(nome: string, curso: string) {
+    const novoEstudante = { id: crypto.randomUUID(), nome, curso };
     setEstudantes(estadoAnterior => [...estadoAnterior, novoEstudante]);
-    
-    // Limpa os campos após o login
+
+    // Limpa os campos após o CadastrarEstudante
     setNome('');
     setCurso('');
   }
@@ -59,17 +59,10 @@ export default function App() {
 
         <TextInput
           style={styles.input}
-          placeholder="Digite o seu RM."
-          value={text ? text.toString() : ''}
-          keyboardType="numeric"
-          onChangeText={(rawText) => {
-            const cleaned = rawText.replace(/[^0-9]/g, '');
-            if (cleaned === '') {
-              setText(0);
-            } else {
-              setText(parseInt(cleaned, 10));
-            }
-          }}
+          placeholder="Digite o seu curso."
+          value={curso}
+          // Remove números automaticamente enquanto o usuário digita
+          onChangeText={(texto) => setCurso(texto.replace(/[0-9]/g, ''))}
         />
 
         <TouchableOpacity
@@ -100,7 +93,7 @@ export default function App() {
               EditarEstudante(edicao,nome,curso)
               return;
             }
-            Login(nome, text.toString());
+            CadastrarEstudante(nome, curso);
           }}
         >
           <Text style={styles.buttanText}>Cadastrar Estudante</Text>
