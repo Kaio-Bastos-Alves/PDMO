@@ -29,11 +29,11 @@ export default function App() {
     setEstudantes(estudantes.filter(e => e.id !== id));
   }
 
-  function Login(nome: string, curso: string) {
+  function CadastrarEstudante(nome: string, curso: string) {
     const novoEstudante = { id: crypto.randomUUID(), nome, curso };
     setEstudantes(estadoAnterior => [...estadoAnterior, novoEstudante]);
 
-    // Limpa os campos após o login
+    // Limpa os campos após o CadastrarEstudante
     setNome('');
     setCurso('');
   }
@@ -44,7 +44,7 @@ export default function App() {
 
   return (
     // 1. Mudamos para flex: 1 aqui na View mais externa para preencher a tela toda
-    <View style={{ flex: 1, backgroundColor: "#bdacacff" }}>
+    <View style={{ flex: 1, backgroundColor: "rgb(250, 222, 222)" }}>
       <SafeAreaView style={styles.container}>
 
         <Text style={{ fontWeight: "bold", fontSize: 24, marginBottom: 10 }}>{edicao.length > 0 ? "Editando o estudante." : "Cadastre novos estudantes!"}</Text>
@@ -53,14 +53,16 @@ export default function App() {
           style={styles.input}
           placeholder="Digite o seu nome."
           value={nome}
-          onChangeText={(nome) => setNome(nome)}
+          // Remove números automaticamente enquanto o usuário digita
+          onChangeText={(texto) => setNome(texto.replace(/[0-9]/g, ''))}
         />
 
         <TextInput
           style={styles.input}
           placeholder="Digite o seu curso."
           value={curso}
-          onChangeText={(curso) => setCurso(curso)}
+          // Remove números automaticamente enquanto o usuário digita
+          onChangeText={(texto) => setCurso(texto.replace(/[0-9]/g, ''))}
         />
 
         <TouchableOpacity
@@ -91,7 +93,7 @@ export default function App() {
               EditarEstudante(edicao,nome,curso)
               return;
             }
-            Login(nome, curso);
+            CadastrarEstudante(nome, curso);
           }}
         >
           <Text style={styles.buttanText}>Cadastrar Estudante</Text>
